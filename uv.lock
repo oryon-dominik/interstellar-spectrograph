@@ -163,7 +163,7 @@ wheels = [
 
 [[package]]
 name = "spectrograph"
-version = "2026.10.2"
+version = "2026.11.0"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
