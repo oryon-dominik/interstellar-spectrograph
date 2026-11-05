@@ -22,13 +22,14 @@ needs. Full quality stays one URL away.
 
 ## Install
 
-Requires Python 3.14 or newer.
+Requires Python 3.14 or newer. The package installs as `cyberise-spectrograph` and
+imports as `spectrograph`.
 
 ```bash
 # the core: planning, Pillow, disk store, serve
-uv add spectrograph
+uv add cyberise-spectrograph
 # plus a view and urlpatterns for Django 6.1 or newer
-uv add "spectrograph[django]"
+uv add "cyberise-spectrograph[django]"
 ```
 
 ## Use with Django

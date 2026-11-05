@@ -5,7 +5,7 @@ _version: 2026.11.30
 author_email: hallo+legal@cyberise.de
 author_name: cyberise GmbH
 browser_tests: false
-distribution_name: spectrograph
+distribution_name: cyberise-spectrograph
 github_org: oryon-dominik
 layer: library
 module_name: spectrograph

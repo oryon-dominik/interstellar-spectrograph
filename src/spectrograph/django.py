@@ -1,4 +1,4 @@
-"""Serve renditions from a Django project: `spectrograph[django]`.
+"""Serve renditions from a Django project: `cyberise-spectrograph[django]`.
 
 The project mounts `urlpatterns(...)` wherever it likes and hands `url_for(...)` to
 `describe`. No settings of its own, no models: everything is passed in.

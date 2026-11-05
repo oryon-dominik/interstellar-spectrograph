@@ -1,5 +1,5 @@
 [project]
-name = "spectrograph"
+name = "cyberise-spectrograph"
 version = "2026.11.0"
 description = "One source image, many renditions: slots, srcset, cache-forever URLs."
 readme = "README.md"

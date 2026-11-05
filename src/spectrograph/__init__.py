@@ -12,7 +12,7 @@ def _resolve_version() -> str:
     pyproject.toml. Only a source tree that was never installed reads the file itself.
     """
     try:
-        return version("spectrograph")
+        return version("cyberise-spectrograph")
     except PackageNotFoundError:
         pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
         if pyproject.is_file():
