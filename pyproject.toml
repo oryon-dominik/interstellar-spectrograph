@@ -10,7 +10,7 @@ dependencies = [
 license = "MIT"
 license-files = ["LICENSE"]
 # The wheel names whoever its LICENSE names.
-authors = [{ name = "Dominik Geldmacher", email = "oryon@cyberise.de" }]
+authors = [{ name = "cyberise GmbH", email = "hallo+legal@cyberise.de" }]
 keywords = ["images", "renditions", "srcset", "responsive-images", "thumbnails", "pillow", "django"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
