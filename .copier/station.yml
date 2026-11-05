@@ -1,0 +1,19 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: f7a6739bf5b94108088d97f11c25689a75ca6ead
+_src_path: gh:oryon-dominik/templates
+_version: 2026.11.30
+author_email: oryon@cyberise.de
+author_name: Dominik Geldmacher
+django: false
+github_org: oryon-dominik
+layer: station
+license: mit
+missions: true
+project_description: 'One source image, many renditions: slots, srcset, cache-forever
+    URLs'
+project_name: spectrograph
+python_version: '3.14'
+repository_name: interstellar-spectrograph
+rookie: false
+standalone: false
+update_handbook: false

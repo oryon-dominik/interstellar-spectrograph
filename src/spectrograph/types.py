@@ -1,0 +1,67 @@
+"""The values spectrograph passes around: plain tuples, nothing more."""
+
+from typing import NamedTuple
+
+# What an original may be, and the media type it is served as. Anything else Pillow knows
+# stays closed: EPS, for one, hands the file to Ghostscript on load. A phone's MPO opens
+# through JPEG.
+MEDIA_TYPES = {
+    "png": "image/png",
+    "jpeg": "image/jpeg",
+    "webp": "image/webp",
+    "avif": "image/avif",
+    "gif": "image/gif",
+    "tiff": "image/tiff",
+}
+READABLE = tuple(image_format.upper() for image_format in MEDIA_TYPES)
+# What renditions are made in.
+RENDITION_FORMATS = ("png", "jpeg", "webp", "avif")
+
+
+class Slot(NamedTuple):
+    """A place an image shows in: its box and the formats it accepts."""
+
+    name: str
+    width: int
+    height: int
+    formats: tuple[str, ...]
+
+
+class Source(NamedTuple):
+    """An original as spectrograph sees it: digest, size and format."""
+
+    digest: str
+    width: int
+    height: int
+    format: str
+
+
+class Rendition(NamedTuple):
+    """One derived file: a slot's image at one width in one format."""
+
+    slot: str
+    width: int
+    format: str
+
+    @property
+    def filename(self) -> str:
+        return f"{self.slot}-{self.width}.{self.format}"
+
+
+class Descriptor(NamedTuple):
+    """What a client needs to pick an image; `_asdict()` is JSON-ready."""
+
+    width: int
+    height: int
+    sizes: str
+    src: dict[str, str]
+    srcset: dict[str, str]
+    original: str
+
+
+class Served(NamedTuple):
+    """A file ready to send: its store name, media type and headers."""
+
+    name: str
+    mime: str
+    headers: dict[str, str]
