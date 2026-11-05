@@ -31,7 +31,7 @@ def read(path: Path, *, digest: str) -> bytes:
 def write_atomically(target: Path, chunks: Iterable[bytes]) -> None:
     """Write through a temporary file, so a reader never sees half a file.
 
-    The file takes the umask's default rights rather than tempfile's 0600, so a web
+    The file takes the umask's default permissions rather than tempfile's 0600, so a web
     server placed in front of the directory can read it.
     """
     target.parent.mkdir(parents=True, exist_ok=True)

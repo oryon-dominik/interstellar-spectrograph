@@ -17,8 +17,8 @@ needs. Full quality stays one URL away.
   `height` and the original — render it into `<picture>`, or send it as JSON to a
   client that picks its own size.
 - **No trust in the URL.** Only keys you resolve and only renditions the plan names
-  are served. No path and no width is read from a URL. The key is: your `resolve`
-  receives it raw and must refuse what it does not know.
+  are served. No path and no width is read from a URL. Only the key comes from there:
+  your `resolve` receives it raw and must refuse what it does not know.
 
 ## Install
 
