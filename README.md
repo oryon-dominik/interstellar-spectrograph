@@ -2,6 +2,13 @@
 
 One source image, many renditions: slots, `srcset`, cache-forever URLs.
 
+[![prek](https://img.shields.io/badge/prek-enabled-orange?logo=rust&logoColor=white)](https://github.com/j178/prek)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://docs.astral.sh/ruff/)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://docs.astral.sh/uv/)
+[![python](https://img.shields.io/badge/Python-3.14+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/oryon-dominik/interstellar-spectrograph/blob/trunk/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/cyberise-spectrograph)](https://pypi.org/project/cyberise-spectrograph/)
+
 A spectrograph splits one beam of light into its bands and records them. This package
 does the same with an image: the original stays untouched, and every place that shows
 it — a card, an avatar, a hero — gets renditions at the widths and in the formats it

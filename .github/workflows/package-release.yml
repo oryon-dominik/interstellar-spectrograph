@@ -29,7 +29,6 @@ permissions:
 jobs:
   test:
     uses: ./.github/workflows/package-test.yml
-    secrets: inherit
 
   version:
     # After the tests, not beside them: a tag over a red suite is a release of a broken package.
@@ -71,7 +70,7 @@ jobs:
       - name: Update the lockfile
         run: uv lock
 
-      - uses: taiki-e/install-action@v2
+      - uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b  # v2.90.1
         with:
           tool: git-cliff
 

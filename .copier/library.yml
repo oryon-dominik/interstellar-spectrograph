@@ -1,7 +1,7 @@
 # Changes here will be overwritten by Copier; answer questions in the template instead.
-_commit: f7a6739bf5b94108088d97f11c25689a75ca6ead
+_commit: 41a4edad046dd535c31d57681809f21be80a6dc1
 _src_path: gh:oryon-dominik/templates
-_version: 2026.11.30
+_version: 2026.11.47
 author_email: hallo+legal@cyberise.de
 author_name: cyberise GmbH
 browser_tests: false
@@ -12,6 +12,7 @@ module_name: spectrograph
 project_description: 'One source image, many renditions: slots, srcset, cache-forever
     URLs'
 project_name: spectrograph
+published: true
 python_version: '3.14'
 release: true
 release_trigger: dispatch
