@@ -205,6 +205,8 @@ def test_a_signed_url_from_url_for_is_served(signed):
         "?expires=1800000000&signature=forged",
         "?expires=soon&signature=forged",
         "?expires=²&signature=forged",
+        # More digits than int() converts: refused like any other forgery, never a server error.
+        pytest.param(f"?expires={'9' * 5000}&signature=forged", id="expires-past-the-digit-limit"),
     ],
 )
 def test_an_unsigned_or_forged_url_is_not_found(signed, query: str):

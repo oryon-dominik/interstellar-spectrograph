@@ -100,9 +100,16 @@ def _signed(request: HttpRequest, signer: serving.Signer, *, key: str, digest: s
     """Tell whether the URL carries a current expiry and a valid signature."""
     expires = request.GET.get("expires", "")
     signature = request.GET.get("signature", "")
-    if not expires.isdecimal() or not signature or int(expires) < time.time():
+    if not expires.isdecimal() or not signature:
         return False
-    return signer.is_valid(key=key, digest=digest, filename=filename, expires=int(expires), signature=signature)
+    try:
+        deadline = int(expires)
+    except ValueError:
+        # More digits than int() converts; no real expiry comes close.
+        return False
+    if deadline < time.time():
+        return False
+    return signer.is_valid(key=key, digest=digest, filename=filename, expires=deadline, signature=signature)
 
 
 def urlpatterns(
