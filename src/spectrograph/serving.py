@@ -14,8 +14,8 @@ from .adapters import disk, pillow
 from .types import MEDIA_TYPES, Rendition, Served, Slot, Source
 
 # The URL carries the content digest, so its content never changes. A shared cache
-# may keep such an answer; one served behind a login must not (the Django view replaces
-# the header when it has a guard).
+# may keep such an answer; one served behind a login must not (the Django view makes it
+# private behind a guard or a signer).
 HEADERS = {"Cache-Control": "max-age=31536000, immutable", "X-Content-Type-Options": "nosniff"}
 
 # A signed URL expires at the end of the window after the running one: a page hands
