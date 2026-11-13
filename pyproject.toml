@@ -11,7 +11,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 # The wheel names whoever its LICENSE names.
 authors = [{ name = "cyberise GmbH", email = "hallo+legal@cyberise.de" }]
-keywords = ["images", "renditions", "srcset", "responsive-images", "thumbnails", "pillow", "django"]
+keywords = ["images", "renditions", "srcset", "responsive-images", "pillow", "django"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
