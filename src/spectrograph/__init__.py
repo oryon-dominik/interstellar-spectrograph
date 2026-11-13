@@ -1,4 +1,4 @@
-"""One source image, many renditions: slots, srcset, cache-forever URLs."""
+"""Responsive images for the web: renditions made on first request, srcset, cache-forever URLs."""
 
 import tomllib
 from importlib.metadata import PackageNotFoundError, version

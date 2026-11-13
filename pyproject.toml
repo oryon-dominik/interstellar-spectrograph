@@ -1,7 +1,7 @@
 [project]
 name = "cyberise-spectrograph"
 version = "2026.11.0"
-description = "One source image, many renditions: slots, srcset, cache-forever URLs."
+description = "Responsive images for the web: renditions made on first request, srcset, cache-forever URLs, a Django view included."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

@@ -9,8 +9,8 @@ distribution_name: cyberise-spectrograph
 github_org: oryon-dominik
 layer: library
 module_name: spectrograph
-project_description: 'One source image, many renditions: slots, srcset, cache-forever
-    URLs'
+project_description: 'Responsive images for the web: renditions made on first request,
+    srcset, cache-forever URLs, a Django view included'
 project_name: spectrograph
 published: true
 python_version: '3.14'

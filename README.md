@@ -1,6 +1,6 @@
 # spectrograph
 
-One source image, many renditions: slots, `srcset`, cache-forever URLs.
+Responsive images for the web: renditions made on first request, `srcset`, cache-forever URLs, a Django view included.
 
 [![prek](https://img.shields.io/badge/prek-enabled-orange?logo=rust&logoColor=white)](https://github.com/j178/prek)
 [![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://docs.astral.sh/ruff/)

@@ -9,8 +9,8 @@ github_org: oryon-dominik
 layer: station
 license: mit
 missions: true
-project_description: 'One source image, many renditions: slots, srcset, cache-forever
-    URLs'
+project_description: 'Responsive images for the web: renditions made on first request,
+    srcset, cache-forever URLs, a Django view included'
 project_name: spectrograph
 python_version: '3.14'
 repository_name: interstellar-spectrograph
