@@ -13,7 +13,6 @@ license-files = ["LICENSE"]
 authors = [{ name = "cyberise GmbH", email = "hallo+legal@cyberise.de" }]
 keywords = ["responsive-images", "srcset", "image-resizing", "webp", "avif", "pillow", "django"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
     "Framework :: Django :: 6.1",
     "Intended Audience :: Developers",
