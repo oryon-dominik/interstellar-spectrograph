@@ -82,7 +82,7 @@ def test_without_originals_a_full_width_rendition_takes_the_original_s_place():
         Rendition(slot="card", width=240, format="png"),
         Rendition(slot="card", width=480, format="png"),
         Rendition(slot="card", width=720, format="png"),
-        Rendition(slot="card", width=1024, format="png"),
+        Rendition(slot="full", width=1024, format="png"),
         Rendition(slot="card", width=240, format="webp"),
         Rendition(slot="card", width=480, format="webp"),
         Rendition(slot="card", width=720, format="webp"),
@@ -92,5 +92,18 @@ def test_without_originals_a_full_width_rendition_takes_the_original_s_place():
 def test_without_originals_a_small_original_is_re_encoded_at_its_size():
     card = Slot(name="card", width=240, height=240, formats=("png",))
     assert planning.renditions(source=source(width=100, height=100), slot=card) == [
-        Rendition(slot="card", width=100, format="png")
+        Rendition(slot="full", width=100, format="png")
     ]
+
+
+def test_slots_share_one_full_width_rendition():
+    """Its bytes are the same whichever slot asks, so it is made and kept once."""
+    card = Slot(name="card", width=240, height=240, formats=("png",))
+    hero = Slot(name="hero", width=720, height=720, formats=("png",))
+    tops = {planning.renditions(source=source(width=1024, height=1024), slot=slot)[-1] for slot in (card, hero)}
+    assert tops == {Rendition(slot="full", width=1024, format="png")}
+
+
+def test_a_slot_cannot_take_the_full_width_name():
+    with pytest.raises(ValueError, match="full"):
+        planning.check(Slot(name="full", width=240, height=240, formats=("png",)))

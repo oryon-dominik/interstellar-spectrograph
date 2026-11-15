@@ -95,6 +95,11 @@ def _one_at_a_time(name: str) -> Iterator[None]:
                 del _flights[name]
 
 
+def _planned(*, source: Source, slots: Sequence[Slot]) -> dict[str, Rendition]:
+    """Every rendition the slots plan, by filename — one entry for what slots share."""
+    return {each.filename: each for slot in slots for each in planning.renditions(source=source, slot=slot)}
+
+
 def expires_at(*, now: float, window: timedelta) -> int:
     """Return the expiry of a URL signed at `now`: the next window's end."""
     seconds = int(window.total_seconds())
@@ -137,8 +142,7 @@ def serve(
         # The original may be any readable format, GIF and TIFF included.
         rendition, image_format = None, source.format
     else:
-        planned = {each.filename: each for slot in slots for each in planning.renditions(source=source, slot=slot)}
-        rendition = planned.get(filename)
+        rendition = _planned(source=source, slots=slots).get(filename)
         if rendition is None:
             return None
         image_format = rendition.format
@@ -175,27 +179,28 @@ def warm(
 ) -> list[str]:
     """Make every planned rendition of `key` now, so no visitor waits for the first one.
 
-    Call it where an image arrives — an upload, an import. Returns the store names; an
-    unknown key returns none, an unreadable original raises OSError.
+    Call it where an image arrives — an upload, an import. Returns the store names of
+    what was made or already kept. An unknown key returns none, an original `inspect`
+    cannot read raises OSError, and a rendition that fails is logged and left out, as
+    `serve` does.
     """
     source_path = resolve(key)
     if source_path is None:
         return []
     source = inspect(source_path)
     names = []
-    for slot in slots:
-        for rendition in planning.renditions(source=source, slot=slot):
-            served = serve(
-                key=key,
-                digest=source.digest,
-                filename=rendition.filename,
-                resolve=resolve,
-                slots=slots,
-                store=store,
-                inspect=inspect,
-                read=read,
-                render=render,
-            )
-            if served is not None:
-                names.append(served.name)
+    for filename in _planned(source=source, slots=slots):
+        served = serve(
+            key=key,
+            digest=source.digest,
+            filename=filename,
+            resolve=resolve,
+            slots=slots,
+            store=store,
+            inspect=inspect,
+            read=read,
+            render=render,
+        )
+        if served is not None:
+            names.append(served.name)
     return names

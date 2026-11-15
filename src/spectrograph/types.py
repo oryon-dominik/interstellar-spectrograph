@@ -41,7 +41,7 @@ class Source(NamedTuple):
 
 
 class Rendition(NamedTuple):
-    """One derived file: a slot's image at one width in one format."""
+    """One derived file at one width in one format: a slot's, or the full-width one slots share."""
 
     slot: str
     width: int

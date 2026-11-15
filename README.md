@@ -18,12 +18,12 @@ needs. Full quality stays one URL away, where a slot offers its original.
   gets renditions at one, two and three times the width the image shows at; a width
   above 80% of the original's is skipped, because the original serves it better.
   Nothing is ever scaled up. A slot offers the original only with `originals=True`;
-  without, a rendition at the original's full width takes its place.
+  without, a rendition at the original's full width takes its place, one for all slots.
 - **Cache forever.** Every URL carries the digest of the original. When the original
   changes, the URL changes; until then a client never downloads twice.
 - **Data, not markup.** The descriptor holds `src`, `srcset`, `sizes`, `width`,
-  `height` and the original — render it into `<picture>`, or send it as JSON to a
-  client that picks its own size.
+  `height` and, where the slot offers it, the original — render it into `<picture>`,
+  or send it as JSON to a client that picks its own size.
 - **No trust in the URL.** Only keys you resolve and only renditions the plan names
   are served. No path and no width is read from a URL. Only the key comes from there:
   your `resolve` receives it raw and must refuse what it does not know.
@@ -60,12 +60,14 @@ def portrait(key: str) -> Path | None:
     return path if path.parent == PORTRAITS and path.is_file() else None
 
 
+store = spectrograph_django.StorageStore(spectrograph_django.AtomicFileSystemStorage(location="renditions"))
+
 urlpatterns = spectrograph_django.urlpatterns(
     prefix="portraits/",
     name="portraits",
     resolve=portrait,
     slots=[CARD],
-    store=spectrograph_django.StorageStore(spectrograph_django.AtomicFileSystemStorage(location="renditions")),
+    store=store,
     guard=None,  # or guard(request, key), returning a response to refuse the request
 )
 

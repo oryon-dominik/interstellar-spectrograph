@@ -72,5 +72,5 @@ def test_without_originals_no_url_names_the_original():
     descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
 
     assert descriptor.original is None
-    assert descriptor.srcset["png"].endswith("/portraits/athena/abc/card-1024.png 1024w")
+    assert descriptor.srcset["png"].endswith("/portraits/athena/abc/full-1024.png 1024w")
     assert "original" not in descriptor.src["png"] + descriptor.srcset["png"]
