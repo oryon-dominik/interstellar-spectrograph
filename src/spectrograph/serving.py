@@ -80,8 +80,8 @@ def serve(
     """Return the file behind a URL, or None when it names nothing current.
 
     Only keys `resolve` knows and only renditions the plan names are served — no path
-    and no width is taken from the URL itself. A file is made and kept on first request,
-    the original too, always from bytes whose digest was checked.
+    and no width is taken from the URL itself, and the original only where a slot offers it.
+    A file is made and kept on first request, always from bytes whose digest was checked.
     """
     source_path = resolve(key)
     if source_path is None:
@@ -95,6 +95,8 @@ def serve(
     if source.digest != digest:
         return None
     if filename == f"original.{source.format}":
+        if not any(slot.originals for slot in slots):
+            return None
         # The original may be any readable format, GIF and TIFF included.
         rendition, image_format = None, source.format
     else:

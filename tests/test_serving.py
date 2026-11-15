@@ -11,7 +11,7 @@ from spectrograph.types import Rendition, Slot
 from tests.fixtures import ports
 from tests.fixtures.ports import Renderer, Shelf
 
-CARD = Slot(name="card", width=240, height=240, formats=("png",))
+CARD = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
 ORIGINAL = Path("originals", "athena.png")
 
 
@@ -186,3 +186,20 @@ def test_changing_one_answer_s_headers_leaves_the_next_one_alone(served):
     served(filename="original.png").headers.pop("Cache-Control")
 
     assert "Cache-Control" in served(filename="original.png").headers
+
+
+def test_without_originals_the_original_serves_nothing(renderer: Renderer, inspector, reader, shelf: Shelf):
+    result = serving.serve(
+        key="athena",
+        digest=ports.SOURCE.digest,
+        filename=f"original.{ports.SOURCE.format}",
+        resolve={"athena": ORIGINAL}.get,
+        slots=[CARD._replace(originals=False)],
+        store=shelf,
+        inspect=inspector,
+        read=reader,
+        render=renderer,
+    )
+
+    assert result is None
+    assert shelf.kept == {}

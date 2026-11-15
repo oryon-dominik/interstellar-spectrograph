@@ -12,7 +12,7 @@ from spectrograph import django as spectrograph_django
 from spectrograph.adapters import pillow
 from spectrograph.types import Slot
 
-CARD = Slot(name="card", width=240, height=240, formats=("png",))
+CARD = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
 urlpatterns: list = []
 
 

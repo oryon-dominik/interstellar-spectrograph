@@ -12,12 +12,13 @@ Responsive images for the web: renditions made on first request, `srcset`, cache
 A spectrograph splits one beam of light into its bands and records them. This package
 does the same with an image: the original stays untouched, and every place that shows
 it — a card, an avatar, a hero — gets renditions at the widths and in the formats it
-needs. Full quality stays one URL away.
+needs. Full quality stays one URL away, where a slot offers its original.
 
 - **Slots, declared by you.** A slot is a box and the formats it accepts. Each slot
   gets renditions at one, two and three times the width the image shows at; a width
   above 80% of the original's is skipped, because the original serves it better.
-  Nothing is ever scaled up.
+  Nothing is ever scaled up. A slot offers the original only with `originals=True`;
+  without, a rendition at the original's full width takes its place.
 - **Cache forever.** Every URL carries the digest of the original. When the original
   changes, the URL changes; until then a client never downloads twice.
 - **Data, not markup.** The descriptor holds `src`, `srcset`, `sizes`, `width`,
@@ -154,9 +155,11 @@ Renditions in PNG, JPEG, WebP and AVIF — AVIF through Pillow's built-in suppor
 Originals may also be GIF or TIFF; any other format is refused, never opened. An animated
 original renders its first frame.
 
-The original is served byte for byte, metadata included: a phone photo carries its EXIF
-block, and with it the place it was taken. Renditions leave EXIF, XMP and comments behind.
-Strip what must not travel before `resolve` returns the path.
+A slot with `originals=True` serves the original byte for byte, metadata included: a phone
+photo carries its EXIF block, and with it the place it was taken. Strip what must not travel
+before `resolve` returns the path. Without it, the default, `original.<format>` answers `404`,
+the descriptor's `original` is `None`, and a rendition at full width tops `srcset` instead.
+Renditions leave EXIF, XMP and comments behind.
 
 ## Development
 

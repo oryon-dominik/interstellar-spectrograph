@@ -7,7 +7,7 @@ def url_for(key: str, digest: str, filename: str) -> str:
 
 
 def test_the_descriptor_offers_every_density_and_the_original():
-    card = Slot(name="card", width=240, height=240, formats=("png",))
+    card = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
     source = Source(digest="abc", width=1024, height=1024, format="png")
 
     descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
@@ -28,7 +28,7 @@ def test_the_descriptor_offers_every_density_and_the_original():
 
 
 def test_the_height_follows_the_aspect_ratio_of_the_original():
-    card = Slot(name="card", width=240, height=240, formats=("png",))
+    card = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
     source = Source(digest="abc", width=1000, height=500, format="png")
 
     descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
@@ -37,7 +37,7 @@ def test_the_height_follows_the_aspect_ratio_of_the_original():
 
 
 def test_a_small_original_is_its_own_src():
-    card = Slot(name="card", width=240, height=240, formats=("png",))
+    card = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
     source = Source(digest="abc", width=100, height=100, format="png")
 
     descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
@@ -47,7 +47,7 @@ def test_a_small_original_is_its_own_src():
 
 
 def test_another_format_carries_only_its_renditions():
-    avatar = Slot(name="avatar", width=240, height=240, formats=("avif", "png"))
+    avatar = Slot(name="avatar", width=240, height=240, formats=("avif", "png"), originals=True)
     source = Source(digest="abc", width=500, height=500, format="png")
 
     descriptor = describe.describe(key="athena", source=source, slot=avatar, url_for=url_for)
@@ -57,9 +57,20 @@ def test_another_format_carries_only_its_renditions():
 
 
 def test_a_sliver_is_described_one_pixel_high():
-    card = Slot(name="card", width=240, height=240, formats=("png",))
+    card = Slot(name="card", width=240, height=240, formats=("png",), originals=True)
     source = Source(digest="abc", width=5000, height=10, format="png")
 
     descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
 
     assert (descriptor.width, descriptor.height) == (240, 1)
+
+
+def test_without_originals_no_url_names_the_original():
+    card = Slot(name="card", width=240, height=240, formats=("png",))
+    source = Source(digest="abc", width=1024, height=1024, format="png")
+
+    descriptor = describe.describe(key="athena", source=source, slot=card, url_for=url_for)
+
+    assert descriptor.original is None
+    assert descriptor.srcset["png"].endswith("/portraits/athena/abc/card-1024.png 1024w")
+    assert "original" not in descriptor.src["png"] + descriptor.srcset["png"]

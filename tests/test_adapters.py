@@ -121,16 +121,18 @@ def test_a_corrupt_exif_block_is_refused_with_an_os_error(tmp_path: Path, image_
         pillow.render(original=path.read_bytes(), rendition=Rendition(slot="card", width=200, format="png"))
 
 
+@pytest.mark.parametrize("width", [200, 400])
 @pytest.mark.parametrize("image_format", RENDITION_FORMATS)
-def test_a_rendition_leaves_the_exif_of_its_original_behind(tmp_path: Path, image_format: str):
-    """EXIF can carry where a photo was taken; the README promises it stays with the original."""
+def test_a_rendition_leaves_the_exif_of_its_original_behind(tmp_path: Path, image_format: str, width: int):
+    """EXIF can carry where a photo was taken; it stays behind at full width too, unscaled."""
     path = tmp_path / "photo.jpeg"
     exif = Image.Exif()
     exif[0x010F] = "a camera maker"
     exif.get_ifd(0x8825)[2] = (52.0, 31.0, 0.0)
     Image.new("RGB", (400, 300)).save(path, format="JPEG", exif=exif)
 
-    data = pillow.render(original=path.read_bytes(), rendition=Rendition(slot="card", width=200, format=image_format))
+    rendition = Rendition(slot="card", width=width, format=image_format)
+    data = pillow.render(original=path.read_bytes(), rendition=rendition)
 
     with Image.open(io.BytesIO(data)) as rendered:
         assert not rendered.getexif()

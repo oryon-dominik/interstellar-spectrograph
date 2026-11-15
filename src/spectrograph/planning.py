@@ -2,7 +2,8 @@
 
 The idea follows django-cast: fit the original into the slot, offer pixel densities
 one to three, and skip a width above 80% of the original's, because the original
-serves it better. Nothing is ever scaled up.
+serves it better. Nothing is ever scaled up. A slot without originals gets a rendition
+at the original's full width in its format instead.
 """
 
 from .types import RENDITION_FORMATS, Rendition, Slot, Source
@@ -39,7 +40,10 @@ def renditions(*, source: Source, slot: Slot) -> list[Rendition]:
     planned = []
     for image_format in slot.formats:
         widths = [width * density for density in DENSITIES if width * density <= source.width * CLOSE_TO_ORIGINAL]
-        if not widths and image_format != source.format:
+        if image_format == source.format and not slot.originals:
+            # The original's place at the top: same width, without its metadata.
+            widths.append(source.width)
+        elif not widths and image_format != source.format:
             # Too small to shrink, but the slot wants another format: convert at full size.
             widths = [width]
         planned.extend(Rendition(slot=slot.name, width=each, format=image_format) for each in widths)

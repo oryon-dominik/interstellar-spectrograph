@@ -19,12 +19,16 @@ RENDITION_FORMATS = ("png", "jpeg", "webp", "avif")
 
 
 class Slot(NamedTuple):
-    """A place an image shows in: its box and the formats it accepts."""
+    """A place an image shows in: its box, the formats it accepts, and whether it offers the original.
+
+    An original goes out byte for byte, metadata and all, so a slot offers it only when asked to.
+    """
 
     name: str
     width: int
     height: int
     formats: tuple[str, ...]
+    originals: bool = False
 
 
 class Source(NamedTuple):
@@ -56,7 +60,7 @@ class Descriptor(NamedTuple):
     sizes: str
     src: dict[str, str]
     srcset: dict[str, str]
-    original: str
+    original: str | None
 
 
 class Served(NamedTuple):
