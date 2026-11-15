@@ -1,6 +1,6 @@
 [project]
 name = "cyberise-spectrograph"
-version = "2026.11.0"
+version = "2026.11.1"
 description = "Responsive images for the web: renditions made on first request, srcset, cache-forever URLs, a Django view included."
 readme = "README.md"
 requires-python = ">=3.14"
