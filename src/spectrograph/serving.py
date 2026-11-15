@@ -3,8 +3,12 @@
 An adapter such as `spectrograph.django` wraps this into a web framework.
 """
 
+import contextlib
 import logging
-from collections.abc import Callable, Sequence
+import os
+import threading
+from collections.abc import Callable, Iterator, Sequence
+from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
 from typing import BinaryIO, Protocol
@@ -21,6 +25,9 @@ HEADERS = {"Cache-Control": "max-age=31536000, immutable", "X-Content-Type-Optio
 # A signed URL expires at the end of the window after the running one: a page hands
 # out one URL for a whole window, so browser caches hit, and none lives past two.
 WINDOW = timedelta(days=14)
+
+# Rendering is CPU work: one per core at most, however many requests arrive at once.
+RENDERS_AT_ONCE = threading.BoundedSemaphore(os.cpu_count() or 1)
 
 log = logging.getLogger("spectrograph")
 
@@ -59,6 +66,35 @@ class Signer(Protocol):
     def is_valid(self, *, key: str, digest: str, filename: str, expires: int, signature: str) -> bool: ...
 
 
+@dataclass
+class _Flight:
+    """One file being made, and how many requests wait on it."""
+
+    lock: threading.Lock = field(default_factory=threading.Lock)
+    waiting: int = 0
+
+
+# Store name to the flight making it, while one is. Within one process only.
+_flights: dict[str, _Flight] = {}
+_flights_lock = threading.Lock()
+
+
+@contextlib.contextmanager
+def _one_at_a_time(name: str) -> Iterator[None]:
+    """Let one request at a time make the file `name`; the table forgets it afterwards."""
+    with _flights_lock:
+        flight = _flights.setdefault(name, _Flight())
+        flight.waiting += 1
+    try:
+        with flight.lock:
+            yield
+    finally:
+        with _flights_lock:
+            flight.waiting -= 1
+            if flight.waiting == 0:
+                del _flights[name]
+
+
 def expires_at(*, now: float, window: timedelta) -> int:
     """Return the expiry of a URL signed at `now`: the next window's end."""
     seconds = int(window.total_seconds())
@@ -82,6 +118,7 @@ def serve(
     Only keys `resolve` knows and only renditions the plan names are served — no path
     and no width is taken from the URL itself, and the original only where a slot offers it.
     A file is made and kept on first request, always from bytes whose digest was checked.
+    Requests that arrive while it is made wait for it instead of making it again.
     """
     source_path = resolve(key)
     if source_path is None:
@@ -107,12 +144,58 @@ def serve(
         image_format = rendition.format
     name = store.find(digest=digest, filename=filename)
     if name is None:
-        try:
-            original = read(source_path, digest=digest)
-            data = original if rendition is None else render(original=original, rendition=rendition)
-        except OSError as error:
-            # Changed since inspected, or a header that reads fine over a broken body.
-            log.warning("Cannot serve %s from %s: %s", filename, source_path, error)
-            return None
-        name = store.put(digest=digest, filename=filename, data=data)
+        with _one_at_a_time(f"{digest}/{filename}"):
+            # Whoever held the flight before may have made it meanwhile.
+            name = store.find(digest=digest, filename=filename)
+            if name is None:
+                try:
+                    original = read(source_path, digest=digest)
+                    if rendition is None:
+                        data = original
+                    else:
+                        with RENDERS_AT_ONCE:
+                            data = render(original=original, rendition=rendition)
+                except OSError as error:
+                    # Changed since inspected, or a header that reads fine over a broken body.
+                    log.warning("Cannot serve %s from %s: %s", filename, source_path, error)
+                    return None
+                name = store.put(digest=digest, filename=filename, data=data)
     return Served(name=name, mime=MEDIA_TYPES[image_format], headers=dict(HEADERS))
+
+
+def warm(
+    *,
+    key: str,
+    resolve: Resolve,
+    slots: Sequence[Slot],
+    store: Store,
+    inspect: Inspect = pillow.inspect,
+    read: Read = disk.read,
+    render: Render = pillow.render,
+) -> list[str]:
+    """Make every planned rendition of `key` now, so no visitor waits for the first one.
+
+    Call it where an image arrives — an upload, an import. Returns the store names; an
+    unknown key returns none, an unreadable original raises OSError.
+    """
+    source_path = resolve(key)
+    if source_path is None:
+        return []
+    source = inspect(source_path)
+    names = []
+    for slot in slots:
+        for rendition in planning.renditions(source=source, slot=slot):
+            served = serve(
+                key=key,
+                digest=source.digest,
+                filename=rendition.filename,
+                resolve=resolve,
+                slots=slots,
+                store=store,
+                inspect=inspect,
+                read=read,
+                render=render,
+            )
+            if served is not None:
+                names.append(served.name)
+    return names

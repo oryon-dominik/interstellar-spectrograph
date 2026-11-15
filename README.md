@@ -108,6 +108,21 @@ holds the storage's URL, it reaches the bucket directly, so neither applies to t
 
 `urlpatterns()` raises `ValueError` for an invalid slot.
 
+### First requests
+
+A rendition is made on its first request. Requests that arrive while it is made wait
+for it instead of making it again, and a worker renders no more files at once than it
+has cores. Both hold within one process: four workers may still make the same file four
+times, each storing the same bytes.
+
+Where an image arrives — an upload, an import — make its renditions ahead of any visitor:
+
+```python
+from spectrograph import serving
+
+serving.warm(key="ada", resolve=portrait, slots=[CARD], store=store)
+```
+
 ### Guards
 
 With a guard, the view answers `private, no-cache`, redirects included: no proxy or
